@@ -10,11 +10,11 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<User> Users { get; set; }
-    public DbSet<Account> Accounts { get; set; }
+    public DbSet<Conta> Accounts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Account>()
+        modelBuilder.Entity<Conta>()
             .ToTable("Accounts");   
     }
 }
