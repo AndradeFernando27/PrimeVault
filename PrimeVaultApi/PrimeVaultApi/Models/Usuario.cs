@@ -12,7 +12,7 @@ public class Usuario{
 
     public string ?Email{get; set;}
 
-    public DateTime CriadoEm{ get; set;}// ano-mes-dia
+    public DateTime CriadoEm { get; set; } = DateTime.UtcNow; // ano-mes-dia
 
     public string ?Senha {get; set;}
 

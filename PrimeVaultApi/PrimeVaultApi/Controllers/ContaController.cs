@@ -42,6 +42,8 @@ public class ContaController : Controller
         }
         var conta = _mapper.Map<Conta>(contaDto);
 
+        conta.CriadoEm = DateTime.UtcNow;
+
         await _context.AddAsync(conta);
         var verifica = await _context.SaveChangesAsync();
 

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System;
 using System.ComponentModel.DataAnnotations;
 using PrimeVaultApi.Db;
+using AutoMapper;
 
 namespace PrimeVaultApi.Controllers
 {
@@ -16,76 +17,51 @@ namespace PrimeVaultApi.Controllers
     public class UsuariosController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public UsuariosController(AppDbContext context)
+        public UsuariosController(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UsuarioDto>>> GetUsuarios()
+        public async Task<IActionResult> GetUsuarios()
         {
             var usuarios = await _context.Usuario.ToListAsync();
-
-            var usuariosDto = usuarios.Select(u => new UsuarioDto
-            {
-                Id = u.Id,
-                Nome = u.Nome ?? string.Empty,
-                Email = u.Email,
-                dataCriacao = u.CriadoEm
-            }).ToList();
-
-            return Ok(usuariosDto);
+       
+            return Ok(usuarios);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UsuarioDto>> GetUsuario(int id)
+        public async Task<ActionResult<UsuarioLerDto>> GetUsuario(int id)
         {
             var usuario = await _context.Usuario.FindAsync(id);
             if (usuario == null)
                 return NotFound();
 
-            var dto = new UsuarioDto
-            {
-                Id = usuario.Id,
-                Nome = usuario.Nome ?? string.Empty,
-                Email = usuario.Email,
-                dataCriacao = usuario.CriadoEm
-            };
-
-            return Ok(dto);
+            return Ok(usuario);
         }
 
         [HttpPost]
-        public async Task<ActionResult<UsuarioDto>> CreateUsuario([FromBody] UsuarioCreateDto createDto)
+        public async Task<IActionResult> CreateUsuario([FromBody] UsuarioCriarDto createDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var novoUsuario = new Usuario
-            {
-                Nome = createDto.Nome,
-                Email = createDto.Email,
-                Senha = createDto.Senha,
-                CriadoEm = DateTime.Now
-            };
+            var novoUsuario = _mapper.Map<Usuario>(createDto);
+
+            novoUsuario.CriadoEm = DateTime.UtcNow;
 
             _context.Usuario.Add(novoUsuario);
             await _context.SaveChangesAsync();
 
-            var usuarioDto = new UsuarioDto
-            {
-                Id = novoUsuario.Id,
-                Nome = novoUsuario.Nome ?? string.Empty,
-                Email = novoUsuario.Email,
-                dataCriacao = novoUsuario.CriadoEm
-            };
 
-            return CreatedAtAction(nameof(GetUsuario), new { id = usuarioDto.Id }, usuarioDto);
+            return Ok(createDto);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateUsuario(int id, [FromBody] UsuarioDto updateDto)
+        public async Task<IActionResult> UpdateUsuario(int id, [FromBody] UsuarioLerDto updateDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -118,17 +94,5 @@ namespace PrimeVaultApi.Controllers
         }
     }
 
-    public class UsuarioCreateDto
-    {
-        [Required(ErrorMessage = "Obrigatório informar seu nome")]
-        [MaxLength(100, ErrorMessage = "Informe um nome com menos de 100 caracteres")]
-        public string Nome { get; set; } = string.Empty;
-
-        [EmailAddress(ErrorMessage = "Email inválido")]
-        public string? Email { get; set; }
-
-        [Required(ErrorMessage = "Senha obrigatória")]
-        [MinLength(6, ErrorMessage = "Senha deve ter no mínimo 6 caracteres")]
-        public string Senha { get; set; } = string.Empty;
-    }
+    
 }

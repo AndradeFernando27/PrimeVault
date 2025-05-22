@@ -14,6 +14,7 @@ builder.Services.AddDbContext<AppDbContext>(opcoes =>
 
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSwaggerGen( opcoes =>
 {
     opcoes.SwaggerDoc("v1", new OpenApiInfo
