@@ -11,25 +11,36 @@ builder.Services.AddDbContext<AppDbContext>(opcoes =>
     opcoes.UseMySQL(connectionString);
 });
 
+// Adiciona política CORS
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:30000") // URL do seu front-end
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                      });
+});
 
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddSwaggerGen( opcoes =>
+builder.Services.AddSwaggerGen(opcoes =>
 {
     opcoes.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "PrimeVault",
         Version = "v1",
         Description = "An API for managing accounts"
-
     });
 });
 
 builder.Services.AddControllers();
 
 var app = builder.Build();
-
 
 if(app.Environment.IsDevelopment())
 {
@@ -38,11 +49,14 @@ if(app.Environment.IsDevelopment())
     {
         opcoes.SwaggerEndpoint("/swagger/v1/swagger.json", "PrimeVault API v1");
         opcoes.RoutePrefix = string.Empty;
-
     });
 }
 
+// Habilita CORS
+app.UseCors(MyAllowSpecificOrigins);
+
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.MapGet("/", () => "");
