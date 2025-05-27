@@ -23,21 +23,19 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddSwaggerGen( opcoes =>
+builder.Services.AddSwaggerGen(opcoes =>
 {
     opcoes.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "PrimeVault",
         Version = "v1",
         Description = "An API for managing accounts"
-
     });
 });
 
 builder.Services.AddControllers();
 
 var app = builder.Build();
-
 
 if(app.Environment.IsDevelopment())
 {
@@ -46,12 +44,15 @@ if(app.Environment.IsDevelopment())
     {
         opcoes.SwaggerEndpoint("/swagger/v1/swagger.json", "PrimeVault API v1");
         opcoes.RoutePrefix = string.Empty;
-
     });
 }
 app.UseCors("FrontendPolicy");
 
+// Habilita CORS
+app.UseCors(MyAllowSpecificOrigins);
+
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.MapGet("/", () => "");
