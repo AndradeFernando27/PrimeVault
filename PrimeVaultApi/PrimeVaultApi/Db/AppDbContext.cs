@@ -30,6 +30,10 @@ public class AppDbContext : DbContext
             .IsRequired();
 
         modelBuilder.Entity<Conta>()
+            .HasIndex(c => c.NumeroConta)
+            .IsUnique();
+
+        modelBuilder.Entity<Conta>()
             .Property(c => c.TipoConta)
             .HasMaxLength(255)
             .IsRequired();
@@ -38,7 +42,7 @@ public class AppDbContext : DbContext
             .Property(c => c.Saldo)
             .IsRequired();
 
-        //Config usuario
+        // Config usuario  
 
         modelBuilder.Entity<Usuario>()
             .ToTable("usuario");
@@ -56,6 +60,10 @@ public class AppDbContext : DbContext
             .IsRequired();
 
         modelBuilder.Entity<Usuario>()
+            .HasIndex(u => u.Email) // Fix: Use HasIndex for unique constraints instead of IsUnique on PropertyBuilder  
+            .IsUnique();
+
+        modelBuilder.Entity<Usuario>()
             .Property(u => u.Nome)
             .HasMaxLength(255)
             .IsRequired();
@@ -71,8 +79,5 @@ public class AppDbContext : DbContext
             .HasForeignKey<Conta>(c => c.User_id)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
-            
-
-
     }
 }

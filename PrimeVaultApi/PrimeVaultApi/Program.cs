@@ -10,7 +10,15 @@ builder.Services.AddDbContext<AppDbContext>(opcoes =>
 {
     opcoes.UseMySQL(connectionString);
 });
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendPolicy", builder =>
+    {
+        builder.WithOrigins("http://localhost:30000")
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -41,6 +49,7 @@ if(app.Environment.IsDevelopment())
 
     });
 }
+app.UseCors("FrontendPolicy");
 
 app.UseAuthorization();
 app.MapControllers();

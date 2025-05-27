@@ -1,19 +1,18 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import './index.css';
-import App from './App.jsx';
-import RegistrarConta from './components/RegistrarConta.jsx';
+import ContaPage from './Components/ContaPage.jsx';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';  
+
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+    <StrictMode>
         <BrowserRouter>
-            <AuthProvider>
-                <Routes>
-                    <Route path="/registrar-conta" element={<RegistrarConta/>} />
-                </Routes>
-                <ToastContainer />
-            </AuthProvider>
+            <Routes>
+                <Route path="/" element={<ContaPage />} />
+            </Routes>
+            <ToastContainer /> 
         </BrowserRouter>
-  </StrictMode>,
-)
+    </StrictMode>
+);
