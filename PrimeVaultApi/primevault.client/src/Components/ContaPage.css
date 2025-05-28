@@ -250,6 +250,15 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+/*Nav buttons*/
+
+.nav-buttons {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+
 /* Scrollbar */
 .conta-list::-webkit-scrollbar {
   width: 8px;

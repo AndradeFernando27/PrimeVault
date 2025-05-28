@@ -11,7 +11,16 @@ function Home() {
     useEffect(() => {
         const carregarDados = async () => {
             try {
-                const resUsuario = await fetch('http://localhost:5000/api/Usuario/1');
+
+                const usuarioLogado = localStorage.getItem("usuarioId");
+
+                const resUsuario = await fetch(`http://localhost:5000/api/usuario/${usuarioLogado}`, {
+                    method: 'GET',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+
                 if (!resUsuario.ok) throw new Error('Erro ao buscar usuário');
                 const dadosUsuario = await resUsuario.json();
                 setUsuario(dadosUsuario);
@@ -73,7 +82,7 @@ function Home() {
 
                 
                 <div className="navigation-button">
-                    <Link to="/ContaPage">
+                    <Link to="/">
                         <button>Gerenciar Conta</button>
                     </Link>
                 </div>

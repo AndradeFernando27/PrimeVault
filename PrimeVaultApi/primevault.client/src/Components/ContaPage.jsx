@@ -278,7 +278,6 @@ const ContaPage = () => {
         });
     };
 
-    
 
     return (
         
@@ -401,7 +400,17 @@ const ContaPage = () => {
                             })}
                         </div>
                     </section>
+                    <section className='nav-buttons'>
+                    <div className="navigation-button">
+                                                <Link to="/Home">
+                                                    <button className='btn btn-primary'>Home</button>
+                                                </Link></div> 
+                                                <div className="navigation-button">
+                                                <Link to="/Login">
+                                                    <button className='btn btn-primary'>Login</button>
+                                                </Link></div> 
 
+                    </section>
                     <section className='form-buttons'>
                         <button type="reset"
                             className='btn btn-secondary'
@@ -418,10 +427,7 @@ const ContaPage = () => {
                         >
                             {isEditing ? 'Salvar Alteracoes' : 'Registrar Conta'}</button>
 
-                            <div className="navigation-button">
-                                                <Link to="/Home">
-                                                    <button>Home</button>
-                                                </Link></div>
+                            
 
                     </section>
                     
