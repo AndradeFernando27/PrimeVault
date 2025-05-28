@@ -212,17 +212,38 @@ const ContaPage = () => {
             <div className='conta-page'>
                 <div className='conta-card'>
                     <section className='conta-form-section'>
-                        <h1 className='conta-title'>{isEditing ? 'Editar Conta' : 'Registrar Conta'}</h1>
+                        <h1 className='conta-title'>Gerenciar Conta</h1>
+                        <h3 className='conta-sub-title'>{isEditing ? 'Editar Conta' : 'Registrar Conta'}</h3>
                         <div className='conta-form'>
-                            <div className={isEditing ? 'none' : 'form-group'}>
+                            <div className='form-group'>
                                 <input
-                                    name="UserId"
-                                    value={formData.UserId}
+                                    name="NumeroConta"
+                                    value={formData.NumeroConta}
                                     placeholder=" "
-                                    className={isEditing ? 'none' : 'form-input'}
+                                    className='form-input'
                                     onChange={handleChange}
                                 />
-                                <label className={isEditing ? 'none' : 'form-label'}>User Id</label>
+                                <label className='form-label'>Numero da Conta</label>
+                            </div>
+                            <div className='form-group'>
+                                <input
+                                    name="NumeroConta"
+                                    value={formData.NumeroConta}
+                                    placeholder=" "
+                                    className='form-input'
+                                    onChange={handleChange}
+                                />
+                                <label className='form-label'>Numero da Conta</label>
+                            </div>
+                            <div className='form-group'>
+                                <input
+                                    name="NumeroConta"
+                                    value={formData.NumeroConta}
+                                    placeholder=" "
+                                    className='form-input'
+                                    onChange={handleChange}
+                                />
+                                <label className='form-label'>Numero da Conta</label>
                             </div>
                             <div className='form-group'>
                                 <input
@@ -243,6 +264,16 @@ const ContaPage = () => {
                                     onChange={handleChange}
                                 />
                                 <label className='form-label'>Tipo da Conta</label>
+                            </div>
+                            <div className='form-group'>
+                                <input
+                                    name="NumeroConta"
+                                    value={formData.NumeroConta}
+                                    placeholder=" "
+                                    className='form-input'
+                                    onChange={handleChange}
+                                />
+                                <label className='form-label'>Numero da Conta</label>
                             </div>
                         </div>
                     </section>

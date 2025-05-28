@@ -48,9 +48,6 @@ if(app.Environment.IsDevelopment())
 }
 app.UseCors("FrontendPolicy");
 
-// Habilita CORS
-app.UseCors(MyAllowSpecificOrigins);
-
 app.UseAuthorization();
 
 app.MapControllers();
