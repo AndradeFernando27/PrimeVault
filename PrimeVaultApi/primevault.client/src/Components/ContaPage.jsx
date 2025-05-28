@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import { cache } from 'react';
+import { Link } from 'react-router-dom';
 
 
 const VALOR_PADRAO_CONTA = {
@@ -81,7 +82,7 @@ const ContaPage = () => {
             });
 
             if (!response.ok) {
-                throw new Error("Conta não encontrada");
+                throw new Error("Conta nï¿½o encontrada");
             }
 
             const conta = await response.json();
@@ -280,6 +281,7 @@ const ContaPage = () => {
     
 
     return (
+        
         <>
 
             <div className='conta-page'>
@@ -369,7 +371,7 @@ const ContaPage = () => {
                                     <div className='conta-item' key={conta.id}>
                                         <div className="conta-details">
                                             <div>Nome:</div>
-                                            <span>{usuario?.nome ?? '—'}</span>
+                                            <span>{usuario?.nome ?? 'ï¿½'}</span>
                                             <div>Email:</div>
                                             <span>{usuario?.email ?? '-'}</span>
                                             <div>Senha:</div>
@@ -415,7 +417,14 @@ const ContaPage = () => {
                             onClick={handleSubmit}
                         >
                             {isEditing ? 'Salvar Alteracoes' : 'Registrar Conta'}</button>
+
+                            <div className="navigation-button">
+                                                <Link to="/Home">
+                                                    <button>Home</button>
+                                                </Link></div>
+
                     </section>
+                    
                 </div>
                 <ToastContainer />
             </div>

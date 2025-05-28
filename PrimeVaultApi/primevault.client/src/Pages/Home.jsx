@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Home.css';
+import { Link } from 'react-router-dom';
 
 function Home() {
     const [usuario, setUsuario] = useState(null);
@@ -69,6 +70,13 @@ function Home() {
                         </span>
                     </div>
                 </section>
+
+                
+                <div className="navigation-button">
+                    <Link to="/ContaPage">
+                        <button>Gerenciar Conta</button>
+                    </Link>
+                </div>
             </div>
         </div>
     );
