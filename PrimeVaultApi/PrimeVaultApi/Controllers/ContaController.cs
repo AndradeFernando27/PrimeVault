@@ -25,7 +25,7 @@ public class ContaController : Controller
     {
         var contas = await _context.Conta.ToListAsync();
 
-        if(contas == null)
+        if (contas == null)
         {
             throw new Exception("Nenhuma conta encontrada");
         }
@@ -72,16 +72,16 @@ public class ContaController : Controller
             var usuario = _mapper.Map<Usuario>(UsuarioCriarDto);
             usuario.CriadoEm = DateTime.UtcNow;
             await _context.AddAsync(usuario);
-            var verificaDb= await _context.SaveChangesAsync();
+            var verificaDb = await _context.SaveChangesAsync();
 
-            if(verificaDb == 0)
+            if (verificaDb == 0)
             {
                 return BadRequest("Erro ao cadastrar usuario");
             }
 
             var contaExisting = await _context.Conta.FirstOrDefaultAsync(
                             c => c.NumeroConta == contaDto.NumeroConta);
-            if(contaExisting != null)
+            if (contaExisting != null)
             {
                 return BadRequest("Numero da conta ja existe");
             }
@@ -90,7 +90,7 @@ public class ContaController : Controller
             conta.User_id = usuario.Id;
 
             _context.Add(conta);
-             verificaDb = await _context.SaveChangesAsync();
+            verificaDb = await _context.SaveChangesAsync();
 
             if (verificaDb == 0)
             {
@@ -158,7 +158,7 @@ public class ContaController : Controller
         }
 
         conta.NumeroConta = contaDto.NumeroConta;
-        
+
 
         _context.Update(conta);
         var verifica = await _context.SaveChangesAsync();
@@ -213,14 +213,14 @@ public class ContaController : Controller
             {
                 return BadRequest("Conta não existente");
             }
-            
+
             contaExisting.TipoConta = contaEditDto.TipoConta;
             contaExisting.EditadoEm = DateTime.UtcNow;
 
             _context.Conta.Update(contaExisting);
             verificaDb = await _context.SaveChangesAsync();
 
-            
+
             await transicao.CommitAsync();
 
             return Ok("Editado com sucesso!");
@@ -235,7 +235,7 @@ public class ContaController : Controller
     [HttpDelete("delete/{numeroConta}")]
     public async Task<IActionResult> DeleteConta(string numeroConta)
     {
-        if(numeroConta == null)
+        if (numeroConta == null)
         {
             return BadRequest("Numero da conta nao pode ser nulo ou vazio");
         }
@@ -255,5 +255,20 @@ public class ContaController : Controller
         }
 
         return Ok("Conta deletada com sucesso");
+    }
+    [HttpGet("saldo/usuario/{userId}")]
+    public async Task<ActionResult<decimal>> GetSaldoByUserId(int userId) // Ou Guid userId, dependendo do tipo do seu UserId
+    {
+        var conta = await _context.Conta
+                                  .Where(c => c.User_id == userId) // Use User_id aqui
+                                  .FirstOrDefaultAsync(); // Pega a primeira conta (ou null se não encontrar)
+
+        if (conta == null) // Se 'conta' é null, significa que não encontrou nenhuma conta para esse usuário
+        {
+            return NotFound($"Nenhuma conta encontrada para o usuário com ID: {userId}.");
+        }
+
+        // Se uma conta foi encontrada, retorne o saldo dela.
+        return Ok(conta.Saldo);
     }
 }

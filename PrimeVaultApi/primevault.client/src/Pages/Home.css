@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Jersey+10&family=Open+Sans:ital@0;1&display=swap');
+
+/* Reset básico (opcional, mas bom para consistência) */
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Layout Geral da Página Home */
+.home-page {
+    min-height: 100vh;
+    padding: 2rem;
+    background: #003366; /* Azul escuro igual ao da ContaPage */
+    display: grid;
+    place-items: center; /* Centraliza o conteúdo principal */
+    font-family: 'Open Sans', sans-serif; /* Usando a fonte importada */
+    color: #fff; /* Cor do texto padrão para a página */
+}
+
+/* Cartão Principal da Home (similar ao conta-card) */
+.home-card {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 800px; /* Mantém a largura máxima do cartão de gerenciamento */
+    background: #003399; /* Azul mais claro para o cartão principal */
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center; /* Centraliza o conteúdo dentro do cartão */
+}
+
+/* Seção de Boas-Vindas */
+.welcome-section {
+    margin-bottom: 3rem; /* Espaço maior antes do quadro de info */
+}
+
+.welcome-title {
+    color: #ffcc29; /* Amarelo da sua paleta BB */
+    font-size: 3rem; /* Tamanho da fonte grande como na ContaPage */
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-family: "Arial", serif; /* Mantendo a fonte Arial */
+}
+
+/* Parágrafo de Aproveite sua experiência */
+.welcome-section p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.2rem;
+}
+
+/* Novo Quadro de Informações do Usuário */
+.user-info-card {
+    background: rgba(0, 0, 0, 0.2); /* Fundo semi-transparente ou mais escuro para destaque */
+    border-radius: 0.5rem; /* Borda mais suave */
+    padding: 2rem;
+    margin-top: 2rem;
+    text-align: left; /* Alinha o texto à esquerda dentro deste quadro */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-info-title {
+    color: #ffcc29; /* Amarelo da sua paleta BB */
+    font-size: 2rem; /* Tamanho do título do quadro */
+    margin-bottom: 1.5rem;
+    text-align: center;
+    border-bottom: 2px solid #ffcc29; /* Borda inferior amarela */
+    padding-bottom: 0.8rem;
+    font-family: "Arial", serif; /* Mantendo a fonte Arial */
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline; /* Para alinhar textos de tamanhos diferentes */
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.2); /* Linha tracejada suave */
+    color: #fff; /* Cor do texto para os itens de informação */
+}
+
+.info-item:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.info-label {
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.9); /* Um branco um pouco mais forte para o label */
+    flex-basis: 40%;
+    padding-right: 1rem;
+}
+
+.info-value {
+    color: #fff;
+    flex-basis: 60%;
+    text-align: right;
+    word-break: break-word;
+}
+
+/* Destaque para o saldo */
+.info-value.saldo {
+    font-weight: bold;
+    color: #aaffaa; /* Um verde claro suave para o saldo, pode ajustar */
+    font-size: 1.3em; /* Saldo um pouco maior */
+}
+
+/* Media Queries para Responsividade */
+@media (max-width: 768px) {
+    .home-card {
+        padding: 1.5rem;
+    }
+
+    .welcome-title {
+        font-size: 2.2rem;
+    }
+
+    .user-info-title {
+        font-size: 1.8rem;
+    }
+
+    .info-item {
+        font-size: 1rem;
+        flex-direction: column; /* Empilha label e valor em telas menores */
+        align-items: flex-start;
+    }
+
+    .info-label,
+    .info-value {
+        flex-basis: auto;
+        width: 100%;
+        text-align: left; /* Alinha tudo à esquerda quando empilhado */
+        padding-right: 0;
+    }
+
+    .info-value {
+        margin-top: 5px; /* Espaço entre label e valor empilhados */
+    }
+}
+
+@media (max-width: 480px) {
+    .home-card {
+        padding: 1rem;
+    }
+
+    .welcome-title {
+        font-size: 1.8rem;
+    }
+
+    .user-info-title {
+        font-size: 1.5rem;
+    }
+}
