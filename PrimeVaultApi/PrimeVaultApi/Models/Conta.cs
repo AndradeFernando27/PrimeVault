@@ -14,7 +14,8 @@ public class Conta
 
     public double Saldo { get; set; }
 
-    public DateTime CriadoEm { get; set; }
+    public DateTime CriadoEm { get; set; } = DateTime.UtcNow; // ano-mes-dia
+    public DateTime EditadoEm { get; set; } = DateTime.UtcNow;
 
 
 

@@ -9,6 +9,7 @@ public class UsuarioMapper : Profile
     {
         CreateMap<Usuario, UsuarioCriarDto>();
         CreateMap<UsuarioCriarDto, Usuario>();
+        CreateMap<Usuario, UsuarioEditDto>();
     }
 }
 

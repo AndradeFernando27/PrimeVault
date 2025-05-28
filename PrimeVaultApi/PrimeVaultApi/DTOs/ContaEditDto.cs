@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace PrimeVaultApi.DTOs;
 
-public class ContaDto
+public class ContaEditDto
 {
 
     [JsonPropertyName("NumeroConta")]
@@ -15,7 +15,5 @@ public class ContaDto
     [Required(ErrorMessage = "Account Type must be added")]
     [MaxLength(100)]
     required public string TipoConta { get; set; }
-    [Required(ErrorMessage = "Balance need to have at least 0")]
-    [JsonPropertyName("Saldo")]
-    required public double Saldo { get; set; }
+
 }

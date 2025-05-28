@@ -12,11 +12,12 @@ public class Usuario{
 
     public string ?Email{get; set;}
 
-    public DateTime CriadoEm { get; set; } = DateTime.UtcNow; // ano-mes-dia
-
     public string ?Senha {get; set;}
 
     public Conta? Conta { get; set;}
+
+    public DateTime CriadoEm { get; set; } = DateTime.UtcNow; // ano-mes-dia
+    public DateTime EditadoEm { get; set; } = DateTime.UtcNow;
 
 
     //trocar por disable na cs.proj

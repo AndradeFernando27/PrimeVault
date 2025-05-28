@@ -51,7 +51,61 @@ public class ContaController : Controller
 
         return Ok(conta);
     }
+    [HttpPost("cadastrar-todos")]
+    public async Task<IActionResult> PostUsuarioConta([FromBody] UsuarioContaDto usuarioContaDto)
+    {
+        using var transicao = await _context.Database.BeginTransactionAsync();
 
+        try
+        {
+            var UsuarioCriarDto = usuarioContaDto.UsuarioCriarDto;
+            var contaDto = usuarioContaDto.ContaDto;
+
+            var userExisting = await _context.Usuario.FirstOrDefaultAsync(
+                            u => u.Email == UsuarioCriarDto.Email);
+
+            if (userExisting != null)
+            {
+                return BadRequest("Usuario ja existente");
+            }
+
+            var usuario = _mapper.Map<Usuario>(UsuarioCriarDto);
+            usuario.CriadoEm = DateTime.UtcNow;
+            await _context.AddAsync(usuario);
+            var verificaDb= await _context.SaveChangesAsync();
+
+            if(verificaDb == 0)
+            {
+                return BadRequest("Erro ao cadastrar usuario");
+            }
+
+            var contaExisting = await _context.Conta.FirstOrDefaultAsync(
+                            c => c.NumeroConta == contaDto.NumeroConta);
+            if(contaExisting != null)
+            {
+                return BadRequest("Numero da conta ja existe");
+            }
+            var conta = _mapper.Map<Conta>(contaDto);
+            conta.CriadoEm = DateTime.UtcNow;
+            conta.User_id = usuario.Id;
+
+            _context.Add(conta);
+             verificaDb = await _context.SaveChangesAsync();
+
+            if (verificaDb == 0)
+            {
+                return BadRequest("Erro ao cadastrar conta");
+            }
+            await transicao.CommitAsync();
+
+            return Ok(usuario);
+        }
+        catch (Exception ex)
+        {
+            transicao.Rollback();
+            return StatusCode(500, "Erro interno: " + ex.Message);
+        }
+    }
     [HttpPost("cadastrar")]
     public async Task<IActionResult> PostConta([FromBody] ContaDto contaDto)
     {
@@ -70,18 +124,9 @@ public class ContaController : Controller
                 return BadRequest("Numero da conta ja existe");
             }
 
-            var userExisting = await _context.Usuario.FirstOrDefaultAsync(
-                            u => u.Id == contaDto.User_id);
-
-            if(userExisting == null)
-            {
-                return BadRequest("Usuario nao encontrado");
-            }
 
             var conta = _mapper.Map<Conta>(contaDto);
             conta.CriadoEm = DateTime.UtcNow;
-
-            Console.WriteLine("dados: " + contaDto.User_id + contaDto.NumeroConta + " " + contaDto.TipoConta + " " + contaDto.Saldo);
 
             await _context.AddAsync(conta);
             var verifica = await _context.SaveChangesAsync();
@@ -98,7 +143,7 @@ public class ContaController : Controller
         }
     }
     [HttpPut("atualizar")]
-    public async Task<IActionResult> PutConta([FromBody] ContaDto contaDto)
+    public async Task<IActionResult> PutConta([FromBody] ContaEditDto contaDto)
     {
         if (contaDto == null)
         {
@@ -107,14 +152,13 @@ public class ContaController : Controller
 
         var conta = await _context.Conta.FirstOrDefaultAsync(c => c.NumeroConta == contaDto.NumeroConta);
 
-       
-
         if (conta == null)
         {
             return NotFound("Conta nao encontrada");
         }
+
+        conta.NumeroConta = contaDto.NumeroConta;
         
-        var contaAlterada = _mapper.Map(contaDto, conta);
 
         _context.Update(conta);
         var verifica = await _context.SaveChangesAsync();
@@ -124,6 +168,68 @@ public class ContaController : Controller
         }
 
         return Ok(conta);
+    }
+    [HttpPut("atualizar-todos")]
+    public async Task<IActionResult> PutUsuarioConta([FromBody] UsuarioContaEditDto usuarioContaDto)
+    {
+        using var transicao = await _context.Database.BeginTransactionAsync();
+
+        try
+        {
+            var UsuarioEditDto = usuarioContaDto.UsuarioEditDto;
+            var contaEditDto = usuarioContaDto.ContaEditDto;
+
+            var userExisting = await _context.Usuario.FirstOrDefaultAsync(
+                            u => u.Email == UsuarioEditDto.Email);
+
+            if (userExisting == null)
+            {
+                return BadRequest("Usuario nao existente");
+            }
+
+            if (userExisting.Email != UsuarioEditDto.Email)
+            {
+                var emailEmUso = await _context.Usuario
+                    .AnyAsync(u => u.Email == UsuarioEditDto.Email);
+
+                if (emailEmUso)
+                {
+                    return BadRequest("Email já está em uso.");
+                }
+            }
+
+            userExisting.Nome = UsuarioEditDto.Nome;
+            userExisting.Senha = UsuarioEditDto.Senha;
+            userExisting.EditadoEm = DateTime.UtcNow;
+            _context.Usuario.Update(userExisting);
+
+            var verificaDb = await _context.SaveChangesAsync();
+
+
+            var contaExisting = await _context.Conta.FirstOrDefaultAsync(
+                            c => c.NumeroConta == contaEditDto.NumeroConta);
+
+            if (contaExisting == null)
+            {
+                return BadRequest("Conta não existente");
+            }
+            
+            contaExisting.TipoConta = contaEditDto.TipoConta;
+            contaExisting.EditadoEm = DateTime.UtcNow;
+
+            _context.Conta.Update(contaExisting);
+            verificaDb = await _context.SaveChangesAsync();
+
+            
+            await transicao.CommitAsync();
+
+            return Ok("Editado com sucesso!");
+        }
+        catch (Exception ex)
+        {
+            await transicao.RollbackAsync();
+            return StatusCode(500, "Erro interno: " + ex.Message);
+        }
     }
 
     [HttpDelete("delete/{numeroConta}")]

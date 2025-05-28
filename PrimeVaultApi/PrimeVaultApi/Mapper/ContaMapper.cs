@@ -9,5 +9,6 @@ public class ContaMapper :Profile
     public ContaMapper() {
         CreateMap<Conta, ContaDto>();
         CreateMap<ContaDto, Conta>();
+        CreateMap<Conta, ContaEditDto>();
     }
 }

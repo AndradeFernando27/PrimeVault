@@ -13,7 +13,7 @@ using AutoMapper;
 namespace PrimeVaultApi.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/usuario")]
     public class UsuariosController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -25,13 +25,20 @@ namespace PrimeVaultApi.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet("todos")]
         public async Task<IActionResult> GetUsuarios()
         {
             var usuarios = await _context.Usuario.ToListAsync();
-       
+
+            if (!usuarios.Any())
+            {
+                return NoContent(); 
+            }
+
             return Ok(usuarios);
         }
+
+        
 
         [HttpGet("{id}")]
         public async Task<ActionResult<UsuarioLerDto>> GetUsuario(int id)
@@ -52,7 +59,7 @@ namespace PrimeVaultApi.Controllers
             var novoUsuario = _mapper.Map<Usuario>(createDto);
 
             novoUsuario.CriadoEm = DateTime.UtcNow;
-
+            novoUsuario.EditadoEm = DateTime.UtcNow;
             _context.Usuario.Add(novoUsuario);
             await _context.SaveChangesAsync();
 
@@ -60,30 +67,32 @@ namespace PrimeVaultApi.Controllers
             return Ok(createDto);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUsuario(int id, [FromBody] UsuarioLerDto updateDto)
+        [HttpPut("atualizar")]
+        public async Task<IActionResult> UpdateUsuario(UsuarioLerDto updateDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var usuario = await _context.Usuario.FindAsync(id);
+            var usuario = await _context.Usuario.FirstOrDefaultAsync(u => u.Email == updateDto.Email);
             if (usuario == null)
                 return NotFound();
 
             // Atualiza somente os campos permitidos
             usuario.Nome = updateDto.Nome;
             usuario.Email = updateDto.Email;
+            
 
-            _context.Entry(usuario).State = EntityState.Modified;
+            _context.Usuario.Update(usuario);
+
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(usuario);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteUsuario(int id)
+        [HttpDelete("delete/{Email}")]
+        public async Task<ActionResult> DeleteUsuario(string email)
         {
-            var usuario = await _context.Usuario.FindAsync(id);
+            var usuario = await _context.Usuario.FirstOrDefaultAsync(u => u.Email == email);
             if (usuario == null)
                 return NotFound();
 

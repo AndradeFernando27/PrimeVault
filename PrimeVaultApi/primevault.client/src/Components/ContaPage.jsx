@@ -5,19 +5,28 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditIcon from '@mui/icons-material/Edit';
+import { cache } from 'react';
 
 
-const DEFAULT_FORM_VALUES = {
+const VALOR_PADRAO_CONTA = {
     UserId: '',
     NumeroConta: '',
     TipoConta: '',
     Saldo: 0,
 };
 
+const VALOR_PADRAO_USUARIO = {
+    Nome: '',
+    Email: '',
+    Senha: '',
+};
+
 const ContaPage = () => {
     const [contas, setContas] = useState([]);
+    const [usuarios, setUsuarios] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-    const [formData, setFormData] = useState(DEFAULT_FORM_VALUES);
+    const [contaFormData, setContaFormData] = useState(VALOR_PADRAO_CONTA);
+    const [usuarioFormData, setUsuarioFormData] = useState(VALOR_PADRAO_USUARIO);
     const [isEditing, setIsEditing] = useState(false);
     
 
@@ -38,8 +47,26 @@ const ContaPage = () => {
     };
 
 
+    const getUsuarios = async () => {
+
+        try {
+            const response = await fetch("http://localhost:5000/api/usuario/todos", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            const data = await response.json();
+            setUsuarios(data);
+        } catch (error) {
+            showError(error);
+        }
+    };
+
+
     useEffect(() => {
         getContas();
+        getUsuarios();
     }, []);
 
 
@@ -66,21 +93,38 @@ const ContaPage = () => {
     };
 
     const editConta = (NumeroConta) => {
-        const contaEditada = contas.find((conta) => conta.NumeroConta === NumeroConta);
-        if (contaEditada) {
-            setFormData({
-                UserId: contaEditada.UserId,
-                NumeroConta: contaEditada.NumeroConta,
-                TipoConta: contaEditada.TipoConta,
+        
+
+        const contaEditada = contas.find((conta) => conta.numeroConta === NumeroConta);
+
+        const usuarioEditado = usuarios.find(u => u.id === contaEditada.user_id);
+
+        
+        if (contaEditada && usuarioEditado) {
+            setContaFormData({
+                
+                NumeroConta: contaEditada.numeroConta,
+                TipoConta: contaEditada.tipoConta,
+            });
+            
+            setUsuarioFormData({
+                Nome: usuarioEditado.nome,
+                Email: usuarioEditado.email,
+                Senha: usuarioEditado.senha,
             });
             setIsEditing(true);
         }
     };
 
-    const handleChange = async (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const handleContaChange = async (e) => {
 
+        setContaFormData({ ...contaFormData, [e.target.name]: e.target.value });
+ 
     };
+
+    const handleUsuarioChange = async (e) => {
+        setUsuarioFormData({ ...usuarioFormData, [e.target.name]: e.target.value });
+    }
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
@@ -91,65 +135,94 @@ const ContaPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        
-        
         if (isEditing) {
 
-            const contaData = {
-                UserId: formData.UserId,
-                NumeroConta: formData.NumeroConta,
-                TipoConta: formData.TipoConta,
+
+            const data = {
+                UsuarioEditDto: {
+                    Nome: usuarioFormData.Nome,
+                    Email: usuarioFormData.Email,
+                    Senha: usuarioFormData.Senha,
+                },
+                ContaEditDto: {
+                    NumeroConta: contaFormData.NumeroConta,
+                    TipoConta: contaFormData.TipoConta,
+                }
             }
-            if (contaData.UserId === '' ||
-                contaData.NumeroConta === '' ||
-                contaData.TipoConta === '') {
+
+            if (data.ContaEditDto.NumeroConta === '' ||
+                data.ContaEditDto.TipoConta === '' ||
+                data.UsuarioEditDto.Nome === '' ||
+                data.UsuarioEditDto.Email === '' ||
+                data.UsuarioEditDto.Senha === '') {
+
                 showError('Por favor complete todos os campos');
                 return;
+
             }
-                await fetch("http://localhost:5000/api/conta/atualizar", {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(contaData),
-                });
-                showSuccess('A conta foi atualizada com sucesso!');
+
+            const response = await fetch("http://localhost:5000/api/conta/atualizar-todos", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                showError("Erro ao atualizar a conta!");
+                
+            }
+            showSuccess('A conta foi atualizada com sucesso');
+
         } else {
 
-            const contaData = {
-                UserId: formData.UserId,
-                NumeroConta: formData.NumeroConta,
-                TipoConta: formData.TipoConta,
-                Saldo: 0,
+            const data = {
+                UsuarioCriarDto: {
+                    Nome: usuarioFormData.Nome,
+                    Email: usuarioFormData.Email,
+                    Senha: usuarioFormData.Senha,
+                },
+                ContaDto: {
+                    NumeroConta: contaFormData.NumeroConta,
+                    TipoConta: contaFormData.TipoConta,
+                    Saldo: 0,
+                }
             }
-            if (contaData.UserId === '' ||
-                contaData.NumeroConta === '' ||
-                contaData.TipoConta === '') {
-                showError('Por favor complete todos os campos');
+            try {
+            var response = await fetch("http://localhost:5000/api/conta/cadastrar-todos", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!response) {
+                showError("Erro ao cadastrar a conta!");
                 return;
             }
 
-            console.log(contaData);
-
-                await fetch("http://localhost:5000/api/conta/cadastrar", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(contaData),
-                });
-                showSuccess('A conta foi cadastrada com sucesso');
+            showSuccess("A conta foi cadastrada com sucesso!");
             }
-            setFormData({
-                UserId: '',
+            catch (error) {
+                showError("Erro de rede ao cadastrar a conta!");
+            }
+
+            }
+            setContaFormData({
                 NumeroConta: '',
                 TipoConta: '',
                 Saldo: 0,
             });
+            setUsuarioFormData({
+                Nome: '',
+                Email: '',
+                Senha: '',
+            });
             setIsEditing(false);
-            
+            getUsuarios();
             getContas();
-        
         
     };
 
@@ -158,20 +231,20 @@ const ContaPage = () => {
         setSearchQuery(value);
         if (value === "")
             getContas();
+            getUsuarios();
 
     };
 
 
-    const deleteConta = async (NumeroConta) => {
+    const deleteUsuario = async (Email) => {
         try {
-            await fetch(`http://localhost:5000/api/conta/delete/${NumeroConta}`, {
+            await fetch(`http://localhost:5000/api/usuario/delete/${Email}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
             }
             )
-        
             showSuccess('A conta foi deletada com sucesso');
             getContas();
         } catch (error) {
@@ -217,61 +290,52 @@ const ContaPage = () => {
                         <div className='conta-form'>
                             <div className='form-group'>
                                 <input
-                                    name="NumeroConta"
-                                    value={formData.NumeroConta}
+                                    name="Nome"
+                                    value={usuarioFormData.Nome}
                                     placeholder=" "
                                     className='form-input'
-                                    onChange={handleChange}
+                                    onChange={handleUsuarioChange}
                                 />
-                                <label className='form-label'>Numero da Conta</label>
+                                <label className='form-label'>Nome</label>
+                            </div>
+                            <div className={isEditing ? 'none' : 'form-group' }>
+                                <input
+                                    name="Email"
+                                    value={usuarioFormData.Email}
+                                    placeholder=" "
+                                    className='form-input'
+                                    onChange={handleUsuarioChange}
+                                />
+                                <label className='form-label'>Email</label>
                             </div>
                             <div className='form-group'>
                                 <input
-                                    name="NumeroConta"
-                                    value={formData.NumeroConta}
+                                    name="Senha"
+                                    type="password"
+                                    value={usuarioFormData.Senha}
                                     placeholder=" "
                                     className='form-input'
-                                    onChange={handleChange}
+                                    onChange={handleUsuarioChange}
                                 />
-                                <label className='form-label'>Numero da Conta</label>
-                            </div>
-                            <div className='form-group'>
-                                <input
-                                    name="NumeroConta"
-                                    value={formData.NumeroConta}
-                                    placeholder=" "
-                                    className='form-input'
-                                    onChange={handleChange}
-                                />
-                                <label className='form-label'>Numero da Conta</label>
-                            </div>
-                            <div className='form-group'>
-                                <input
-                                    name="NumeroConta"
-                                    value={formData.NumeroConta}
-                                    placeholder=" "
-                                    className='form-input'
-                                    onChange={handleChange}
-                                />
-                                <label className='form-label'>Numero da Conta</label>
-                            </div>
+                                <label className='form-label'>Senha</label>
+                            </div>                         
                             <div className='form-group'>
                                 <input
                                     name="TipoConta"
-                                    value={formData.TipoConta}
+                                    value={contaFormData.TipoConta}
                                     placeholder=" "
                                     className='form-input'
-                                    onChange={handleChange}
+                                    onChange={handleContaChange}
                                 />
                                 <label className='form-label'>Tipo da Conta</label>
                             </div>
-                            <div className='form-group'>
+                            <div className={isEditing ? 'none' : 'form-group'}>
                                 <input
                                     name="NumeroConta"
-                                    value={formData.NumeroConta}
+                                    value={contaFormData.NumeroConta}
                                     placeholder=" "
                                     className='form-input'
-                                    onChange={handleChange}
+                                    onChange={handleContaChange}
                                 />
                                 <label className='form-label'>Numero da Conta</label>
                             </div>
@@ -295,32 +359,44 @@ const ContaPage = () => {
                         </div>
 
                         <div className='conta-list'>
-                            {contas.map((conta) => (
-                                <div className='conta-item' key={conta.id}>
-                                    <div className="conta-details">
-                                        <div>Numero da conta:</div>
-                                        <span>{conta.numeroConta}</span>
-                                        <div>Tipo da conta:</div>
-                                        <span>{conta.tipoConta}</span>
-                                        <div>Saldo:</div>
-                                        <span>{conta.saldo}</span>
-                                    </div>
-                                    <div className='conta-actions'>
-                                        <button
-                                            className='action-button'
-                                            onClick={() => editConta(conta.NumeroConta)}
-                                        >
-                                            <EditIcon />
-                                        </button>
-                                        <button
-                                            className='action-button delete'
-                                            onClick={() => deleteConta(conta.NumeroConta)}
-                                        >
-                                            <DeleteOutlineIcon />
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
+                            {contas.map((conta) => {
+                                const usuario = usuarios.find((u) => u.Id === conta.UserId);
+                                console.log('Ussuario:', usuario);
+                                console.log('conta:', conta);
+
+                                return (
+
+                                    <div className='conta-item' key={conta.id}>
+                                        <div className="conta-details">
+                                            <div>Nome:</div>
+                                            <span>{usuario?.nome ?? '—'}</span>
+                                            <div>Email:</div>
+                                            <span>{usuario?.email ?? '-'}</span>
+                                            <div>Senha:</div>
+                                            <span>*******</span>
+                                            <div>Numero da conta:</div>
+                                            <span>{conta.numeroConta}</span>
+                                            <div>Tipo da conta:</div>
+                                            <span>{conta.tipoConta}</span>
+                                            <div>Saldo:</div>
+                                            <span>{conta.saldo}</span>
+                                        </div>
+                                        <div className='conta-actions'>
+                                            <button
+                                                className='action-button'
+                                                onClick={() => editConta(conta.numeroConta)}
+                                            >
+                                                <EditIcon />
+                                            </button>
+                                            <button
+                                                className='action-button delete'
+                                                onClick={() => deleteUsuario(usuario.email)}
+                                            >
+                                                <DeleteOutlineIcon />
+                                            </button>
+                                        </div>
+                                    </div>)
+                            })}
                         </div>
                     </section>
 
@@ -328,10 +404,11 @@ const ContaPage = () => {
                         <button type="reset"
                             className='btn btn-secondary'
                             onClick={() => {
-                            setFormData(DEFAULT_FORM_VALUES);
+                                setContaFormData(VALOR_PADRAO_CONTA);
+                                setUsuarioFormData(VALOR_PADRAO_USUARIO);
                                 setIsEditing(false);
                                 setSearchQuery('');
-                                getContas(); }}>Cancel</button>      
+                                getContas(); }}>Cancelar</button>      
                         <button
                             type="button"
                             className='btn btn-primary'
