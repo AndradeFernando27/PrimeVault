@@ -38,7 +38,32 @@ namespace PrimeVaultApi.Controllers
             return Ok(usuarios);
         }
 
-        
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUsuario([FromBody] UsuarioLoginDto usuarioLoginDto)
+        {
+
+            if(usuarioLoginDto == null)
+            {
+                return BadRequest("Login e senha incorretos");
+            }
+
+            var usuario = await _context.Usuario.FirstOrDefaultAsync(c => c.Email == usuarioLoginDto.Login);
+
+            if(usuario == null)
+            {
+                return BadRequest("Email inexistente");
+            }
+
+            if (usuarioLoginDto.Senha != usuario.Senha)
+            {
+                return BadRequest("Login ou senha incorretos");
+            }
+
+            return Ok(usuario);
+
+        }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<UsuarioLerDto>> GetUsuario(int id)

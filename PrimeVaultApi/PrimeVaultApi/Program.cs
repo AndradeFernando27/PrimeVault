@@ -46,6 +46,12 @@ if(app.Environment.IsDevelopment())
         opcoes.RoutePrefix = string.Empty;
     });
 }
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
 app.UseCors("FrontendPolicy");
 
 app.UseAuthorization();
