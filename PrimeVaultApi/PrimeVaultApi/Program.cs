@@ -1,15 +1,36 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using MySql.Data.MySqlClient;
 using PrimeVaultApi.Db;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+
+var databaseName = new MySqlConnectionStringBuilder(connectionString).Database;
+
+
+var masterConnectionString = new MySqlConnectionStringBuilder(connectionString)
+{
+    Database = ""
+}.ConnectionString;
+
+    
+using (var connection = new MySqlConnection(masterConnectionString))
+{
+    connection.Open();
+
+    using var cmd = connection.CreateCommand();
+    cmd.CommandText = $"CREATE DATABASE IF NOT EXISTS `{databaseName}`;";
+    cmd.ExecuteNonQuery();
+}
+
 builder.Services.AddDbContext<AppDbContext>(opcoes =>
 {
     opcoes.UseMySQL(connectionString);
 });
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", builder =>
@@ -52,6 +73,7 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 }
+
 app.UseCors("FrontendPolicy");
 
 app.UseAuthorization();
