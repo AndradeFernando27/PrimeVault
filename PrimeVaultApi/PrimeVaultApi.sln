@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrimeVaultApi", "PrimeVaultApi\PrimeVaultApi.csproj", "{92379D61-5F77-4D26-BE7C-3C47D3C707AB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B89688A0-BCAF-47BA-AE8E-A306569C0B87}"
+	ProjectSection(SolutionItems) = preProject
+		..\.gitignore = ..\.gitignore
+	EndProjectSection
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "primevault.client", "PrimeVault.client\primevault.client.esproj", "{63C695D8-F84A-4D11-86F3-F998A245C57D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{33909112-DBE8-42BD-8233-F27D1D76E562}"
+	ProjectSection(SolutionItems) = preProject
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{92379D61-5F77-4D26-BE7C-3C47D3C707AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92379D61-5F77-4D26-BE7C-3C47D3C707AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92379D61-5F77-4D26-BE7C-3C47D3C707AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92379D61-5F77-4D26-BE7C-3C47D3C707AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63C695D8-F84A-4D11-86F3-F998A245C57D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63C695D8-F84A-4D11-86F3-F998A245C57D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63C695D8-F84A-4D11-86F3-F998A245C57D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{63C695D8-F84A-4D11-86F3-F998A245C57D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63C695D8-F84A-4D11-86F3-F998A245C57D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63C695D8-F84A-4D11-86F3-F998A245C57D}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5F47A9AF-4C3E-452E-B0C2-EAEC2E0283A6}
+	EndGlobalSection
+EndGlobal
